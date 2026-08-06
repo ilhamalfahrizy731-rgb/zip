@@ -113,6 +113,101 @@
             height: 100% !important;
         }
 
+        /* ===== PRELOADER ===== */
+        #preloader {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #000000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        #preloader .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        #preloader .logo-bull {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            animation: bullPulse 2.5s ease-in-out infinite;
+        }
+
+        #preloader .logo-bull svg {
+            width: 100%;
+            height: 100%;
+            fill: #FF5500;
+            filter: drop-shadow(0 0 40px rgba(255, 85, 0, 0.3));
+        }
+
+        @keyframes bullPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.08); opacity: 0.8; }
+        }
+
+        #preloader .logo-text {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: clamp(1.2rem, 3vw, 2.5rem);
+            letter-spacing: 0.4em;
+            color: #ffffff;
+            opacity: 0.6;
+            text-transform: uppercase;
+        }
+
+        #preloader .logo-text span {
+            color: #FF5500;
+            opacity: 1;
+        }
+
+        #preloader .scroll-hint {
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            animation: floatUp 2s ease-in-out infinite;
+            cursor: pointer;
+        }
+
+        #preloader .scroll-hint .arrow {
+            width: 24px;
+            height: 24px;
+            border-right: 2px solid rgba(255, 85, 0, 0.6);
+            border-top: 2px solid rgba(255, 85, 0, 0.6);
+            transform: rotate(-45deg);
+            transition: border-color 0.3s ease;
+        }
+
+        #preloader .scroll-hint:hover .arrow {
+            border-color: #FF5500;
+        }
+
+        #preloader .scroll-hint .label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 10px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.3);
+            transition: color 0.3s ease;
+        }
+
+        #preloader .scroll-hint:hover .label {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        @keyframes floatUp {
+            0%, 100% { transform: translateY(0); opacity: 0.5; }
+            50% { transform: translateY(-10px); opacity: 1; }
+        }
+
         /* ===== BUTTON NAVBAR ===== */
         .btn-wrapper {
             position: relative;
@@ -640,7 +735,7 @@
             }
         }
 
-        /* ===== SECTION ACOUSTICS - REDESIGN ===== */
+        /* ===== SECTION ACOUSTICS ===== */
         .sound-wave {
             position: absolute;
             border-radius: 50%;
@@ -651,35 +746,6 @@
         @keyframes soundPulse {
             0%, 100% { transform: scale(1); opacity: 0.3; }
             50% { transform: scale(1.5); opacity: 0; }
-        }
-
-        .rev-indicator {
-            transition: all 0.1s ease;
-        }
-
-        /* ===== AD PERSONAM - REDESIGN ===== */
-        .color-swatch {
-            position: relative;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .color-swatch::after {
-            content: '';
-            position: absolute;
-            inset: -4px;
-            border-radius: 50%;
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
-        }
-
-        .color-swatch.active::after {
-            border-color: #FF5500;
-            box-shadow: 0 0 30px rgba(255, 85, 0, 0.4);
-        }
-
-        .color-swatch:hover {
-            transform: scale(1.15);
         }
 
         .spec-preview {
@@ -694,29 +760,57 @@
             border-color: rgba(255, 85, 0, 0.3);
             box-shadow: 0 0 40px rgba(255, 85, 0, 0.05);
         }
+
+        .color-swatch {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .color-swatch.active::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px solid #FF5500;
+            box-shadow: 0 0 30px rgba(255, 85, 0, 0.4);
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.15);
+        }
     </style>
 </head>
 <body class="antialiased bg-grid selection:bg-arancio selection:text-black">
 
-    <!-- Particle Overlay Canvas -->
-    <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-10 opacity-40"></canvas>
-
-    <!-- Preloader -->
-    <div id="loader" class="fixed inset-0 z-[100] bg-obsidian flex flex-col justify-center items-center">
-        <div class="relative flex flex-col items-center">
-            <div class="w-16 h-16 border-2 border-arancio/20 border-t-arancio rounded-full animate-spin mb-6"></div>
-            <span class="text-2xl font-black font-heading tracking-[0.6em] text-white mb-4">AUTOMOBILI LAMBORGHINI</span>
-            <div class="w-80 h-[2px] bg-white/10 rounded-full overflow-hidden">
-                <div id="load-bar" class="w-0 h-full bg-arancio transition-all duration-150"></div>
+    <!-- ===== PRELOADER ===== -->
+    <div id="preloader">
+        <div class="logo-container">
+            <!-- Logo Lamborghini Bull (SVG) -->
+            <div class="logo-bull">
+                <img src="lambo.jpg" alt="Lamborghini Logo" />
             </div>
-            <p id="load-text" class="text-[10px] font-heading tracking-widest text-arancio mt-4">INITIALIZING V12 TELEMETRY... 0%</p>
+            
+            <div class="logo-text">
+                AUTOMOBILI <span>LAMBORGHINI</span>
+            </div>
+            
+            <!-- Scroll Hint -->
+            <div class="scroll-hint" onclick="enterSite()">
+                <div class="arrow"></div>
+                <span class="label">Click Here</span>
+            </div>
         </div>
     </div>
+
+    <!-- Particle Overlay Canvas -->
+    <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-10 opacity-40"></canvas>
 
     <!-- Navbar -->
     <div class="fixed top-6 left-0 w-full z-50 px-4 md:px-8 flex justify-center pointer-events-none">
         <nav class="pointer-events-auto w-full max-w-6xl px-8 py-4 rounded-full glass-panel flex justify-between items-center border border-white/10">
             <div class="flex items-center gap-3">
+                <div class="w-3 h-3 rounded-full bg-arancio animate-ping"></div>
                 <span class="text-sm md:text-base font-black font-heading tracking-widest text-white">
                     AVENTADOR <span class="text-arancio glow-orange">LP 700-4</span>
                 </span>
@@ -727,6 +821,7 @@
                 <a href="#three-lab" class="hover:text-arancio transition-colors">3D Lab</a>
                 <a href="#specs" class="hover:text-arancio transition-colors">Performance</a>
                 <a href="#sound" class="hover:text-arancio transition-colors">Acoustics</a>
+                <a href="#customizer" class="hover:text-arancio transition-colors">Ad Personam</a>
             </div>
 
             <div class="btn-wrapper">
@@ -894,9 +989,8 @@
         </div>
     </section>
 
-    <!-- ===== SECTION ACOUSTICS - REDESIGN ===== -->
+    <!-- ACOUSTICS -->
     <section id="sound" class="relative z-30 py-28 px-6 bg-gradient-to-b from-obsidian via-cardBg to-obsidian border-y border-white/5 overflow-hidden">
-        <!-- Decorative sound waves -->
         <div class="absolute inset-0 pointer-events-none opacity-30">
             <div class="sound-wave" style="width: 800px; height: 800px; top: -200px; right: -200px; animation-delay: 0s;"></div>
             <div class="sound-wave" style="width: 600px; height: 600px; bottom: -100px; left: -100px; animation-delay: 1.5s;"></div>
@@ -913,14 +1007,12 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-                <!-- Left: Engine Telemetry -->
                 <div class="glass-panel p-8 rounded-3xl border border-white/10">
                     <div class="flex items-center gap-3 mb-6">
                         <div class="w-2 h-2 rounded-full bg-arancio animate-pulse"></div>
                         <span class="text-[10px] font-heading text-arancio tracking-[0.3em] uppercase">Live Telemetry</span>
                     </div>
 
-                    <!-- RPM Display -->
                     <div class="mb-8">
                         <div class="flex justify-between items-center mb-2">
                             <span class="text-xs text-gray-400 font-heading tracking-widest">Engine RPM</span>
@@ -936,7 +1028,6 @@
                         </div>
                     </div>
 
-                    <!-- Sound Visualizer -->
                     <div class="flex justify-between items-end h-16 gap-1.5 px-1 mb-6" id="eq-container">
                         <div class="w-full bg-gradient-to-t from-arancio/40 to-arancio rounded-t eq-bar" style="animation-duration: 0.6s; height: 30%;"></div>
                         <div class="w-full bg-gradient-to-t from-arancio/40 to-arancio rounded-t eq-bar" style="animation-duration: 0.9s; height: 50%;"></div>
@@ -950,14 +1041,12 @@
                         <div class="w-full bg-gradient-to-t from-arancio/40 to-arancio rounded-t eq-bar" style="animation-duration: 0.65s; height: 55%;"></div>
                     </div>
 
-                    <!-- Rev Button -->
                     <button id="rev-btn" class="w-full py-4 bg-gradient-to-r from-arancio to-amber-600 hover:from-white hover:to-white text-black font-black font-heading text-xs tracking-[0.25em] uppercase rounded-xl transition-all duration-300 shadow-xl shadow-arancio/20 relative overflow-hidden group">
                         <span class="relative z-10">TEST REV ENGINE SOUND</span>
                         <span class="absolute inset-0 bg-gradient-to-r from-white to-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
                     </button>
                 </div>
 
-                <!-- Right: Engine Specs -->
                 <div class="grid grid-cols-2 gap-4">
                     <div class="spec-preview" data-tilt data-tilt-max="5" data-tilt-speed="300">
                         <div class="text-[10px] font-heading text-arancio tracking-[0.2em] uppercase mb-1">Configuration</div>
@@ -1193,6 +1282,45 @@
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
+        // ===== PRELOADER =====
+        function enterSite() {
+            const preloader = document.getElementById('preloader');
+            preloader.style.opacity = '0';
+            preloader.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                preloader.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                // Trigger scroll animations setelah preloader hilang
+                initScrollAnimations();
+            }, 1000);
+        }
+
+        // Scroll event untuk preloader
+        document.addEventListener('wheel', function(e) {
+            if (document.getElementById('preloader').style.display !== 'none') {
+                if (e.deltaY < 0) { // Scroll ke atas
+                    enterSite();
+                }
+            }
+        }, { passive: true });
+
+        // Touch event untuk mobile (swipe up)
+        let touchStartY = 0;
+        document.addEventListener('touchstart', function(e) {
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        document.addEventListener('touchmove', function(e) {
+            const preloader = document.getElementById('preloader');
+            if (preloader.style.display !== 'none') {
+                const touchEndY = e.touches[0].clientY;
+                if (touchStartY - touchEndY > 50) { // Swipe up
+                    enterSite();
+                }
+            }
+        }, { passive: true });
+
+        // ===== FRAME SCRUBBING =====
         const frameCount = 116;
         const currentFrame = index => `output_all_frames/frame_${index.toString().padStart(5, '0')}.jpg`;
 
@@ -1209,28 +1337,15 @@
         window.addEventListener('resize', resizeCanvas);
 
         let imagesLoaded = 0;
-        const loadBar = document.getElementById('load-bar');
-        const loadText = document.getElementById('load-text');
-        const loader = document.getElementById('loader');
 
         for (let i = 0; i < frameCount; i++) {
             const img = new Image();
             img.src = currentFrame(i);
             img.onload = () => {
                 imagesLoaded++;
-                const progress = Math.round((imagesLoaded / frameCount) * 100);
-                loadBar.style.width = `${progress}%`;
-                loadText.innerText = `INITIALIZING V12 TELEMETRY... ${progress}%`;
-
                 if (imagesLoaded === frameCount) {
-                    gsap.to(loader, {
-                        opacity: 0,
-                        duration: 0.8,
-                        onComplete: () => {
-                            loader.style.display = 'none';
-                            initScrollAnimations();
-                        }
-                    });
+                    // Semua gambar sudah di-load
+                    console.log('All frames loaded');
                 }
             };
             images.push(img);
@@ -1287,6 +1402,7 @@
             ScrollTrigger.refresh();
         }
 
+        // ===== PARTICLES =====
         const particleCanvas = document.getElementById('particle-canvas');
         const pCtx = particleCanvas.getContext('2d');
         particleCanvas.width = window.innerWidth;
@@ -1315,7 +1431,7 @@
         }
         drawParticles();
 
-        // REV SIMULATION
+        // ===== REV SIMULATION =====
         const revBtn = document.getElementById('rev-btn');
         const rpmBar = document.getElementById('rpm-bar');
         const rpmText = document.getElementById('rpm-text');
@@ -1343,7 +1459,7 @@
             }, 100);
         });
 
-        // COLOR SELECTOR
+        // ===== COLOR SELECTOR =====
         function selectColor(hex, name, element) {
             document.querySelectorAll('.color-swatch').forEach(el => el.classList.remove('active'));
             element.classList.add('active');
@@ -1357,6 +1473,13 @@
         document.querySelectorAll('[data-tilt]').forEach(el => {
             VanillaTilt.init(el);
         });
+
+        // ===== START PRELOADER =====
+        // By default, preloader visible, body scroll di-lock
+        document.body.style.overflow = 'hidden';
+
+        // Fungsi enterSite juga dipanggil dari onclick
+        window.enterSite = enterSite;
     </script>
 </body>
 </html>
