@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="id" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lamborghini Aventador LP 700-4 | Hypercar Experience</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        arancio: '#FF5500', 
+                        arancioGlow: 'rgba(255, 85, 0, 0.6)',
+                        obsidian: '#020203',
+                        cardBg: '#08090C',
+                    },
+                    fontFamily: {
+                        heading: ['Orbitron', 'sans-serif'],
+                        body: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
+    
+    <!-- Three.js -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #020203;
+            color: #FFFFFF;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .bg-grid {
+            background-size: 50px 50px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        }
+
+        .glass-panel {
+            background: rgba(10, 11, 16, 0.65);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9);
+        }
+
+        .glass-card-3d {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.04) 0%, rgba(6, 7, 10, 0.9) 100%);
+            border: 1px solid rgba(255, 85, 0, 0.15);
+            backdrop-filter: blur(20px);
+            transform-style: preserve-3d;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-card-3d:hover {
+            border-color: rgba(255, 85, 0, 0.8);
+            box-shadow: 0 0 45px rgba(255, 85, 0, 0.3), inset 0 0 15px rgba(255, 85, 0, 0.1);
+        }
+
+        .glow-orange {
+            text-shadow: 0 0 25px rgba(255, 85, 0, 0.85);
+        }
+
+        .glow-box {
+            box-shadow: 0 0 35px rgba(255, 85, 0, 0.4);
+        }
+
+        .eq-bar {
+            animation: eqAnim 1s ease-in-out infinite alternate;
+        }
+        @keyframes eqAnim {
+            0% { height: 15%; }
+            100% { height: 100%; }
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #020203; }
+        ::-webkit-scrollbar-thumb { background: #FF5500; border-radius: 10px; }
+
+        #three-container {
+            width: 100%;
+            height: 100%;
+            min-height: 500px;
+        }
+        #three-container canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* ===== BUTTON NAVBAR ===== */
+        .btn-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .btn {
+            --border-radius: 24px;
+            --padding: 4px;
+            --transition: 0.4s;
+            --button-color: #101010;
+            --highlight-color-hue: 25deg;
+
+            user-select: none;
+            display: flex;
+            justify-content: center;
+            padding: 0.5em 0.5em 0.5em 1.1em;
+            font-family: "Poppins", "Inter", "Segoe UI", sans-serif;
+            font-size: 0.85em;
+            font-weight: 400;
+
+            background-color: var(--button-color);
+
+            box-shadow:
+                inset 0px 1px 1px rgba(255, 255, 255, 0.2),
+                inset 0px 2px 2px rgba(255, 255, 255, 0.15),
+                inset 0px 4px 4px rgba(255, 255, 255, 0.1),
+                inset 0px 8px 8px rgba(255, 255, 255, 0.05),
+                inset 0px 16px 16px rgba(255, 255, 255, 0.05),
+                0px -1px 1px rgba(0, 0, 0, 0.02),
+                0px -2px 2px rgba(0, 0, 0, 0.03),
+                0px -4px 4px rgba(0, 0, 0, 0.05),
+                0px -8px 8px rgba(0, 0, 0, 0.06),
+                0px -16px 16px rgba(0, 0, 0, 0.08);
+
+            border: solid 1px #fff2;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+
+            transition:
+                box-shadow var(--transition),
+                border var(--transition),
+                background-color var(--transition);
+        }
+
+        .btn::before {
+            content: "";
+            position: absolute;
+            top: calc(0px - var(--padding));
+            left: calc(0px - var(--padding));
+            width: calc(100% + var(--padding) * 2);
+            height: calc(100% + var(--padding) * 2);
+            border-radius: calc(var(--border-radius) + var(--padding));
+            pointer-events: none;
+            background-image: linear-gradient(0deg, #0004, #000a);
+            z-index: -1;
+            transition:
+                box-shadow var(--transition),
+                filter var(--transition);
+            box-shadow:
+                0 -8px 8px -6px #0000 inset,
+                0 -16px 16px -8px #00000000 inset,
+                1px 1px 1px #fff2,
+                2px 2px 2px #fff1,
+                -1px -1px 1px #0002,
+                -2px -2px 2px #0001;
+        }
+
+        .btn::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: inherit;
+            pointer-events: none;
+            background-image: linear-gradient(
+                0deg,
+                #fff,
+                hsl(var(--highlight-color-hue), 100%, 70%),
+                hsla(var(--highlight-color-hue), 100%, 70%, 50%),
+                8%,
+                transparent
+            );
+            background-position: 0 0;
+            opacity: 0;
+            transition:
+                opacity var(--transition),
+                filter var(--transition);
+        }
+
+        .btn-letter {
+            position: relative;
+            display: inline-block;
+            color: #fff5;
+            animation: letter-anim 2s ease-in-out infinite;
+            transition:
+                color var(--transition),
+                text-shadow var(--transition),
+                opacity var(--transition);
+        }
+
+        @keyframes letter-anim {
+            50% {
+                text-shadow: 0 0 3px #fff8;
+                color: #fff;
+            }
+        }
+
+        .btn-svg {
+            flex-grow: 1;
+            height: 24px;
+            margin-right: 0.5rem;
+            fill: #e8e8e8;
+            animation: flicker 2s linear infinite;
+            animation-delay: 0.5s;
+            filter: drop-shadow(0 0 2px #fff9);
+            transition:
+                fill var(--transition),
+                filter var(--transition),
+                opacity var(--transition);
+        }
+
+        @keyframes flicker {
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .txt-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            min-width: 6.4em;
+        }
+
+        .txt-1,
+        .txt-2 {
+            position: absolute;
+            word-spacing: -1em;
+        }
+
+        .txt-1 {
+            animation: appear-anim 1s ease-in-out forwards;
+        }
+
+        .txt-2 {
+            opacity: 0;
+        }
+
+        @keyframes appear-anim {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .btn:focus .txt-1 {
+            animation: opacity-anim 0.3s ease-in-out forwards;
+            animation-delay: 1s;
+        }
+
+        .btn:focus .txt-2 {
+            animation: opacity-anim 0.3s ease-in-out reverse forwards;
+            animation-delay: 1s;
+        }
+
+        @keyframes opacity-anim {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .btn:focus .btn-letter {
+            animation:
+                focused-letter-anim 1s ease-in-out forwards,
+                letter-anim 1.2s ease-in-out infinite;
+            animation-delay: 0s, 1s;
+        }
+
+        @keyframes focused-letter-anim {
+            0%, 100% { filter: blur(0px); }
+            50% {
+                transform: scale(2);
+                filter: blur(10px) brightness(150%)
+                    drop-shadow(-36px 12px 12px hsl(var(--highlight-color-hue), 100%, 70%));
+            }
+        }
+
+        .btn:focus .btn-svg {
+            animation-duration: 1.2s;
+            animation-delay: 0.2s;
+        }
+
+        .btn:focus::before {
+            box-shadow:
+                0 -8px 12px -6px #fff3 inset,
+                0 -16px 16px -8px hsla(var(--highlight-color-hue), 100%, 70%, 20%) inset,
+                1px 1px 1px #fff3,
+                2px 2px 2px #fff1,
+                -1px -1px 1px #0002,
+                -2px -2px 2px #0001;
+        }
+
+        .btn:focus::after {
+            opacity: 0.6;
+            mask-image: linear-gradient(0deg, #fff, transparent);
+            filter: brightness(100%);
+        }
+
+        .btn-letter:nth-child(1),
+        .btn:focus .btn-letter:nth-child(1) { animation-delay: 0s; }
+        .btn-letter:nth-child(2),
+        .btn:focus .btn-letter:nth-child(2) { animation-delay: 0.08s; }
+        .btn-letter:nth-child(3),
+        .btn:focus .btn-letter:nth-child(3) { animation-delay: 0.16s; }
+        .btn-letter:nth-child(4),
+        .btn:focus .btn-letter:nth-child(4) { animation-delay: 0.24s; }
+        .btn-letter:nth-child(5),
+        .btn:focus .btn-letter:nth-child(5) { animation-delay: 0.32s; }
+        .btn-letter:nth-child(6),
+        .btn:focus .btn-letter:nth-child(6) { animation-delay: 0.4s; }
+        .btn-letter:nth-child(7),
+        .btn:focus .btn-letter:nth-child(7) { animation-delay: 0.48s; }
+        .btn-letter:nth-child(8),
+        .btn:focus .btn-letter:nth-child(8) { animation-delay: 0.56s; }
+        .btn-letter:nth-child(9),
+        .btn:focus .btn-letter:nth-child(9) { animation-delay: 0.64s; }
+        .btn-letter:nth-child(10),
+        .btn:focus .btn-letter:nth-child(10) { animation-delay: 0.72s; }
+
+        .btn:active {
+            border: solid 1px hsla(var(--highlight-color-hue), 100%, 80%, 70%);
+            background-color: hsla(var(--highlight-color-hue), 50%, 20%, 0.5);
+        }
+
+        .btn:active::before {
+            box-shadow:
+                0 -8px 12px -6px #fffa inset,
+                0 -16px 16px -8px hsla(var(--highlight-color-hue), 100%, 70%, 80%) inset,
+                1px 1px 1px #fff4,
+                2px 2px 2px #fff2,
+                -1px -1px 1px #0002,
+                -2px -2px 2px #0001;
+        }
+
+        .btn:active::after {
+            opacity: 1;
+            mask-image: linear-gradient(0deg, #fff, transparent);
+            filter: brightness(200%);
+        }
+
+        .btn:active .btn-letter {
+            text-shadow: 0 0 1px hsla(var(--highlight-color-hue), 100%, 90%, 90%);
+            animation: none;
+        }
+
+        .btn:hover {
+            border: solid 1px hsla(var(--highlight-color-hue), 100%, 80%, 40%);
+        }
+
+        .btn:hover::before {
+            box-shadow:
+                0 -8px 8px -6px #fffa inset,
+                0 -16px 16px -8px hsla(var(--highlight-color-hue), 100%, 70%, 30%) inset,
+                1px 1px 1px #fff2,
+                2px 2px 2px #fff1,
+                -1px -1px 1px #0002,
+                -2px -2px 2px #0001;
+        }
+
+        .btn:hover::after {
+            opacity: 1;
+            mask-image: linear-gradient(0deg, #fff, transparent);
+        }
+
+        .btn:hover .btn-svg {
+            fill: #fff;
+            filter: drop-shadow(0 0 3px hsl(var(--highlight-color-hue), 100%, 70%))
+                drop-shadow(0 -4px 6px #0009);
+            animation: none;
+        }
+
+        /* ===== BUTTON CTA ===== */
+        .btn-cta {
+            position: relative;
+            padding: 16px 48px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #CC4400, #FF5500, #FF8833);
+            background-size: 200% 200%;
+            color: #fff;
+            font-family: "Poppins", "Inter", "Segoe UI", sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(255, 85, 0, 0.2);
+        }
+
+        .btn-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn-cta:hover::before {
+            left: 100%;
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 0 60px rgba(255, 85, 0, 0.5);
+            background-position: 100% 100%;
+        }
+
+        .btn-cta:active {
+            transform: scale(0.95);
+        }
+
+        .btn-cta .btn-cta-text {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-cta .btn-cta-icon {
+            position: relative;
+            z-index: 2;
+            width: 20px;
+            height: 20px;
+            fill: #fff;
+            transition: transform 0.4s ease;
+        }
+
+        .btn-cta:hover .btn-cta-icon {
+            transform: translateX(6px) rotate(-8deg);
+        }
+
+        .btn-cta::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #FF5500, #FF8833, #FF5500);
+            background-size: 300% 300%;
+            z-index: -1;
+            animation: glow-ring 3s ease-in-out infinite;
+            filter: blur(12px);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .btn-cta:hover::after {
+            opacity: 1;
+        }
+
+        @keyframes glow-ring {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* ===== 3D LAB SECTION ===== */
+        #three-lab {
+            position: relative;
+            min-height: 100vh;
+            background: #050508;
+            overflow: hidden;
+        }
+
+        #three-lab .lab-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 10;
+            background: 
+                linear-gradient(to right, rgba(5, 5, 8, 0.85) 0%, transparent 40%, transparent 60%, rgba(5, 5, 8, 0.85) 100%),
+                linear-gradient(to bottom, rgba(5, 5, 8, 0.6) 0%, transparent 30%, transparent 70%, rgba(5, 5, 8, 0.8) 100%);
+        }
+
+        #three-lab .lab-content {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            z-index: 20;
+            padding: 0 5%;
+            max-width: 600px;
+            pointer-events: none;
+        }
+
+        #three-lab .lab-content * {
+            pointer-events: auto;
+        }
+
+        #three-lab .lab-content .badge {
+            display: inline-block;
+            padding: 4px 16px;
+            font-size: 10px;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: #FF5500;
+            border: 1px solid rgba(255, 85, 0, 0.3);
+            border-radius: 999px;
+            background: rgba(255, 85, 0, 0.08);
+            backdrop-filter: blur(10px);
+            margin-bottom: 16px;
+        }
+
+        #three-lab .lab-content h2 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            color: white;
+            line-height: 1.1;
+            margin-bottom: 16px;
+        }
+
+        #three-lab .lab-content h2 span {
+            color: #FF5500;
+            text-shadow: 0 0 40px rgba(255, 85, 0, 0.3);
+        }
+
+        #three-lab .lab-content p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: clamp(0.8rem, 1.2vw, 1rem);
+            line-height: 1.8;
+            margin-bottom: 24px;
+            max-width: 480px;
+        }
+
+        #three-lab .lab-content .btn-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        #three-lab .lab-content .btn-group button {
+            padding: 10px 24px;
+            font-size: 10px;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 700;
+        }
+
+        #three-lab .lab-content .btn-group .btn-wireframe {
+            background: rgba(255, 85, 0, 0.15);
+            border: 1px solid rgba(255, 85, 0, 0.4);
+            color: #FF5500;
+        }
+
+        #three-lab .lab-content .btn-group .btn-wireframe:hover {
+            background: #FF5500;
+            color: #000;
+            box-shadow: 0 0 40px rgba(255, 85, 0, 0.3);
+        }
+
+        #three-lab .lab-content .btn-group .btn-reset {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        #three-lab .lab-content .btn-group .btn-reset:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+        }
+
+        #three-lab .lab-container {
+            width: 100%;
+            height: 100vh;
+            min-height: 600px;
+        }
+
+        #three-lab .lab-container canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        #three-lab .drag-hint {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 15;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 9px;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            #three-lab .lab-content {
+                top: auto;
+                bottom: 5%;
+                transform: none;
+                max-width: 100%;
+                padding: 0 5%;
+                text-align: center;
+            }
+            
+            #three-lab .lab-content p {
+                max-width: 100%;
+            }
+            
+            #three-lab .lab-content .btn-group {
+                justify-content: center;
+            }
+        }
+
+        /* ===== SECTION ACOUSTICS - REDESIGN ===== */
+        .sound-wave {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 85, 0, 0.1);
+            animation: soundPulse 4s ease-in-out infinite;
+        }
+
+        @keyframes soundPulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.5); opacity: 0; }
+        }
+
+        .rev-indicator {
+            transition: all 0.1s ease;
+        }
+
+        /* ===== AD PERSONAM - REDESIGN ===== */
+        .color-swatch {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .color-swatch::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .color-swatch.active::after {
+            border-color: #FF5500;
+            box-shadow: 0 0 30px rgba(255, 85, 0, 0.4);
+        }
+
+        .color-swatch:hover {
+            transform: scale(1.15);
+        }
+
+        .spec-preview {
+            background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 20px 24px;
+            transition: all 0.4s ease;
+        }
+
+        .spec-preview:hover {
+            border-color: rgba(255, 85, 0, 0.3);
+            box-shadow: 0 0 40px rgba(255, 85, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="antialiased bg-grid selection:bg-arancio selection:text-black">
+
+    <!-- Particle Overlay Canvas -->
+    <canvas id="particle-canvas" class="fixed inset-0 pointer-events-none z-10 opacity-40"></canvas>
+
+    <!-- Preloader -->
+    <div id="loader" class="fixed inset-0 z-[100] bg-obsidian flex flex-col justify-center items-center">
+        <div class="relative flex flex-col items-center">
+            <div class="w-16 h-16 border-2 border-arancio/20 border-t-arancio rounded-full animate-spin mb-6"></div>
+            <span class="text-2xl font-black font-heading tracking-[0.6em] text-white mb-4">AUTOMOBILI LAMBORGHINI</span>
+            <div class="w-80 h-[2px] bg-white/10 rounded-full overflow-hidden">
+                <div id="load-bar" class="w-0 h-full bg-arancio transition-all duration-150"></div>
+            </div>
+            <p id="load-text" class="text-[10px] font-heading tracking-widest text-arancio mt-4">INITIALIZING V12 TELEMETRY... 0%</p>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <div class="fixed top-6 left-0 w-full z-50 px-4 md:px-8 flex justify-center pointer-events-none">
+        <nav class="pointer-events-auto w-full max-w-6xl px-8 py-4 rounded-full glass-panel flex justify-between items-center border border-white/10">
+            <div class="flex items-center gap-3">
+                <span class="text-sm md:text-base font-black font-heading tracking-widest text-white">
+                    AVENTADOR <span class="text-arancio glow-orange">LP 700-4</span>
+                </span>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-8 text-[10px] font-semibold tracking-[0.25em] uppercase text-gray-300">
+                <a href="#hero" class="hover:text-arancio transition-colors">Overview</a>
+                <a href="#three-lab" class="hover:text-arancio transition-colors">3D Lab</a>
+                <a href="#specs" class="hover:text-arancio transition-colors">Performance</a>
+                <a href="#sound" class="hover:text-arancio transition-colors">Acoustics</a>
+            </div>
+
+            <div class="btn-wrapper">
+                <button class="btn" onclick="window.location.href='#cta'">
+                    <svg class="btn-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"
+                        ></path>
+                    </svg>
+                    <div class="txt-wrapper">
+                        <div class="txt-1">
+                            <span class="btn-letter">C</span>
+                            <span class="btn-letter">o</span>
+                            <span class="btn-letter">n</span>
+                            <span class="btn-letter">f</span>
+                            <span class="btn-letter">i</span>
+                            <span class="btn-letter">g</span>
+                            <span class="btn-letter">u</span>
+                            <span class="btn-letter">r</span>
+                            <span class="btn-letter">e</span>
+                        </div>
+                        <div class="txt-2">
+                            <span class="btn-letter">C</span>
+                            <span class="btn-letter">o</span>
+                            <span class="btn-letter">n</span>
+                            <span class="btn-letter">f</span>
+                            <span class="btn-letter">i</span>
+                            <span class="btn-letter">g</span>
+                            <span class="btn-letter">u</span>
+                            <span class="btn-letter">r</span>
+                            <span class="btn-letter">e</span>
+                        </div>
+                    </div>
+                </button>
+            </div>
+        </nav>
+    </div>
+
+    <!-- HERO -->
+    <section id="hero" class="relative w-full h-[500vh] bg-obsidian">
+        <div class="sticky top-0 left-0 w-full h-screen overflow-hidden">
+            <canvas id="hero-canvas" class="absolute inset-0 w-full h-full object-cover z-0"></canvas>
+            <div class="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-black/80 z-10 pointer-events-none"></div>
+            <div class="absolute inset-0 bg-radial-gradient from-transparent via-obsidian/40 to-obsidian z-10 pointer-events-none"></div>
+
+            <div class="relative z-20 w-full h-full max-w-7xl mx-auto px-6 flex items-center justify-center pointer-events-none">
+                <div id="text-1" class="text-center absolute opacity-0 translate-y-12">
+                    <span class="inline-block px-5 py-1.5 mb-4 text-[10px] font-heading tracking-[0.4em] uppercase bg-arancio/10 border border-arancio/40 text-arancio rounded-full backdrop-blur-md">
+                        Sant'Agata Bolognese, Italy
+                    </span>
+                    <h1 class="text-5xl md:text-8xl font-black font-heading tracking-tight text-white mb-4">
+                        AVENTADOR <span class="text-transparent bg-clip-text bg-gradient-to-r from-arancio via-amber-400 to-arancio glow-orange">LP 700-4</span>
+                    </h1>
+                    <p class="text-gray-300 max-w-xl mx-auto text-xs md:text-sm leading-relaxed font-light">
+                        Relentless power meets carbon engineering. A naturally aspirated V12 icon built to defy gravity and aerodynamics.
+                    </p>
+                </div>
+
+                <div id="text-2" class="text-left absolute left-6 md:left-16 max-w-xl opacity-0 translate-y-12">
+                    <span class="text-arancio font-heading text-xs tracking-[0.3em] uppercase mb-2 block">Naturally Aspirated Legend</span>
+                    <h2 class="text-4xl md:text-6xl font-black font-heading mb-4 text-white">6.5L V12 ENGINE</h2>
+                    <p class="text-gray-400 text-xs md:text-sm font-light leading-relaxed">
+                        Unfiltered acoustics delivering 700 CV directly to all four wheels via ISR ultra-fast transmission.
+                    </p>
+                </div>
+
+                <div id="text-3" class="text-right absolute right-6 md:right-16 max-w-xl opacity-0 translate-y-12">
+                    <span class="text-arancio font-heading text-xs tracking-[0.3em] uppercase mb-2 block">Carbon Core Innovation</span>
+                    <h2 class="text-4xl md:text-6xl font-black font-heading mb-4 text-white">MONOCOQUE CELL</h2>
+                    <p class="text-gray-400 text-xs md:text-sm font-light leading-relaxed">
+                        Single-shell full carbon fiber cabin offering unmatched structural safety and lightness at 147.5 kg.
+                    </p>
+                </div>
+
+                <div id="text-4" class="text-center absolute opacity-0 translate-y-12">
+                    <span class="text-7xl md:text-9xl font-black font-heading text-transparent bg-clip-text bg-gradient-to-r from-arancio to-amber-500 glow-orange block mb-2">
+                        2.9s
+                    </span>
+                    <p class="text-2xl md:text-3xl font-heading font-black text-white tracking-widest mb-1">0 - 100 KM/H ACCELERATION</p>
+                    <p class="text-gray-400 text-xs font-light">Maximum Velocity <span class="text-white font-bold">350 KM/H (217 MPH)</span></p>
+                </div>
+            </div>
+
+            <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 opacity-70">
+                <span class="text-[9px] font-heading tracking-[0.3em] text-gray-400 uppercase">Scroll to Explore</span>
+                <div class="w-4 h-7 border border-white/30 rounded-full flex justify-center p-1">
+                    <div class="w-1 h-2 bg-arancio rounded-full animate-bounce"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3D LAB -->
+    <section id="three-lab">
+        <div class="lab-overlay"></div>
+        <div class="lab-content">
+            <span class="badge">Real-time Visualizer</span>
+            <h2>3D CHASSIS & <span>AERO LAB</span></h2>
+            <p>
+                Interact directly with the dynamic geometric 3D wireframe matrix of the Aventador. 
+                Rotate and inspect structural stress points in real-time.
+            </p>
+            <div class="btn-group">
+                <button class="btn-wireframe" id="wireframe-btn">Toggle Wireframe</button>
+                <button class="btn-reset" id="reset-btn">Reset View</button>
+            </div>
+        </div>
+        <div class="lab-container" id="three-container"></div>
+        <div class="drag-hint">⟳ Drag to rotate 3D geometry</div>
+    </section>
+
+    <!-- PERFORMANCE CARDS -->
+    <section id="specs" class="relative z-30 py-28 px-6 max-w-7xl mx-auto">
+        <div class="text-center mb-20">
+            <span class="text-arancio font-heading text-[11px] tracking-[0.4em] uppercase mb-3 block">Engineering Metrics</span>
+            <h2 class="text-4xl md:text-6xl font-black font-heading tracking-tight text-white">PERFORMANCE MATRIX</h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="glass-card-3d p-8 rounded-3xl relative overflow-hidden" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.3">
+                <div style="transform: translateZ(40px);">
+                    <div class="flex justify-between items-center mb-8">
+                        <span class="text-[10px] font-heading text-arancio tracking-[0.25em] uppercase">POWER OUTPUT</span>
+                        <div class="w-2.5 h-2.5 rounded-full bg-arancio glow-box"></div>
+                    </div>
+                    <h3 class="text-5xl font-black font-heading text-white mb-3">700 <span class="text-arancio text-2xl">CV</span></h3>
+                    <p class="text-gray-400 text-xs font-light leading-relaxed">8,250 RPM Max Rev Limit naturally aspirated V12 engine.</p>
+                </div>
+            </div>
+
+            <div class="glass-card-3d p-8 rounded-3xl relative overflow-hidden" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.3">
+                <div style="transform: translateZ(40px);">
+                    <div class="flex justify-between items-center mb-8">
+                        <span class="text-[10px] font-heading text-arancio tracking-[0.25em] uppercase">MAX TORQUE</span>
+                        <div class="w-2.5 h-2.5 rounded-full bg-arancio glow-box"></div>
+                    </div>
+                    <h3 class="text-5xl font-black font-heading text-white mb-3">690 <span class="text-arancio text-2xl">Nm</span></h3>
+                    <p class="text-gray-400 text-xs font-light leading-relaxed">5,500 RPM peak torque response across all 4 wheels.</p>
+                </div>
+            </div>
+
+            <div class="glass-card-3d p-8 rounded-3xl relative overflow-hidden" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.3">
+                <div style="transform: translateZ(40px);">
+                    <div class="flex justify-between items-center mb-8">
+                        <span class="text-[10px] font-heading text-arancio tracking-[0.25em] uppercase">DRY WEIGHT</span>
+                        <div class="w-2.5 h-2.5 rounded-full bg-arancio glow-box"></div>
+                    </div>
+                    <h3 class="text-5xl font-black font-heading text-white mb-3">1,575 <span class="text-arancio text-2xl">KG</span></h3>
+                    <p class="text-gray-400 text-xs font-light leading-relaxed">Power-to-weight ratio of 2.25 kg/CV dry chassis.</p>
+                </div>
+            </div>
+
+            <div class="glass-card-3d p-8 rounded-3xl relative overflow-hidden" data-tilt data-tilt-max="15" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.3">
+                <div style="transform: translateZ(40px);">
+                    <div class="flex justify-between items-center mb-8">
+                        <span class="text-[10px] font-heading text-arancio tracking-[0.25em] uppercase">ISR GEAR SHIFT</span>
+                        <div class="w-2.5 h-2.5 rounded-full bg-arancio glow-box"></div>
+                    </div>
+                    <h3 class="text-5xl font-black font-heading text-white mb-3">50 <span class="text-arancio text-2xl">MS</span></h3>
+                    <p class="text-gray-400 text-xs font-light leading-relaxed">Independent Shifting Rods (ISR) ultra-fast response.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECTION ACOUSTICS - REDESIGN ===== -->
+    <section id="sound" class="relative z-30 py-28 px-6 bg-gradient-to-b from-obsidian via-cardBg to-obsidian border-y border-white/5 overflow-hidden">
+        <!-- Decorative sound waves -->
+        <div class="absolute inset-0 pointer-events-none opacity-30">
+            <div class="sound-wave" style="width: 800px; height: 800px; top: -200px; right: -200px; animation-delay: 0s;"></div>
+            <div class="sound-wave" style="width: 600px; height: 600px; bottom: -100px; left: -100px; animation-delay: 1.5s;"></div>
+            <div class="sound-wave" style="width: 400px; height: 400px; top: 50%; left: 50%; transform: translate(-50%, -50%); animation-delay: 0.8s;"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="text-center mb-16">
+                <span class="text-arancio font-heading text-[11px] tracking-[0.4em] uppercase mb-3 block">Acoustic Engineering</span>
+                <h2 class="text-4xl md:text-6xl font-black font-heading text-white">UNFILTERED <span class="text-arancio glow-orange">V12 SYMPHONY</span></h2>
+                <p class="text-gray-400 text-sm font-light max-w-2xl mx-auto mt-4 leading-relaxed">
+                    Experience the raw, unfiltered roar of 12 cylinders firing in perfect harmony — a naturally aspirated masterpiece.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                <!-- Left: Engine Telemetry -->
+                <div class="glass-panel p-8 rounded-3xl border border-white/10">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-2 h-2 rounded-full bg-arancio animate-pulse"></div>
+                        <span class="text-[10px] font-heading text-arancio tracking-[0.3em] uppercase">Live Telemetry</span>
+                    </div>
+
+                    <!-- RPM Display -->
+                    <div class="mb-8">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs text-gray-400 font-heading tracking-widest">Engine RPM</span>
+                            <span id="rpm-text" class="text-2xl font-heading font-black text-arancio glow-orange">1,000</span>
+                        </div>
+                        <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+                            <div id="rpm-bar" class="w-[12%] h-full bg-gradient-to-r from-amber-500 via-arancio to-arancio rounded-full transition-all duration-150"></div>
+                        </div>
+                        <div class="flex justify-between text-[8px] text-gray-600 font-heading mt-1">
+                            <span>0</span>
+                            <span>4,125</span>
+                            <span>8,250</span>
+                        </div>
+                    </div>
+
+                    <!-- Sound Visualizer -->
+                    <div class="flex justify-between items-end h-16 gap-1.5 px-1 mb-6" id="eq-container">
+                        <div class="w-full bg-gradient-to-t from-arancio/40 to-arancio rounded-t eq-bar" style="animation-duration: 0.6s; height: 30%;"></div>
+                        <div class="w-full bg-gradient-to-t from-arancio/40 to-arancio rounded-t eq-bar" style="animation-duration: 0.9s; height: 50%;"></div>
+                        <div class="w-full bg-gradient-to-t from-arancio/40 to-arancio rounded-t eq-bar" style="animation-duration: 0.4s; height: 20%;"></div>
+                        <div class="w-full bg-gradient-to-t from-arancio/40 to-arancio rounded-t eq-bar" style="animation-duration: 0.7s; height: 70%;"></div>
+                        <div class="w-full bg-gradient-to-t from-arancio/40 to-arancio rounded-t eq-bar" style="animation-duration: 0.5s; height: 40%;"></div>
+                        <div class="w-full bg-gradient-to-t from-arancio/40 to-arancio rounded-t eq-bar" style="animation-duration: 0.8s; height: 90%;"></div>
+                        <div class="w-full bg-gradient-to-t from-arancio/40 to-arancio rounded-t eq-bar" style="animation-duration: 0.55s; height: 60%;"></div>
+                        <div class="w-full bg-gradient-to-t from-arancio/40 to-arancio rounded-t eq-bar" style="animation-duration: 0.75s; height: 35%;"></div>
+                        <div class="w-full bg-gradient-to-t from-arancio/40 to-arancio rounded-t eq-bar" style="animation-duration: 0.45s; height: 80%;"></div>
+                        <div class="w-full bg-gradient-to-t from-arancio/40 to-arancio rounded-t eq-bar" style="animation-duration: 0.65s; height: 55%;"></div>
+                    </div>
+
+                    <!-- Rev Button -->
+                    <button id="rev-btn" class="w-full py-4 bg-gradient-to-r from-arancio to-amber-600 hover:from-white hover:to-white text-black font-black font-heading text-xs tracking-[0.25em] uppercase rounded-xl transition-all duration-300 shadow-xl shadow-arancio/20 relative overflow-hidden group">
+                        <span class="relative z-10">TEST REV ENGINE SOUND</span>
+                        <span class="absolute inset-0 bg-gradient-to-r from-white to-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                    </button>
+                </div>
+
+                <!-- Right: Engine Specs -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="spec-preview" data-tilt data-tilt-max="5" data-tilt-speed="300">
+                        <div class="text-[10px] font-heading text-arancio tracking-[0.2em] uppercase mb-1">Configuration</div>
+                        <div class="text-2xl font-black font-heading text-white">V12</div>
+                        <div class="text-xs text-gray-500">60° Angle</div>
+                    </div>
+
+                    <div class="spec-preview" data-tilt data-tilt-max="5" data-tilt-speed="300">
+                        <div class="text-[10px] font-heading text-arancio tracking-[0.2em] uppercase mb-1">Displacement</div>
+                        <div class="text-2xl font-black font-heading text-white">6.5<span class="text-sm">L</span></div>
+                        <div class="text-xs text-gray-500">6,498 cc</div>
+                    </div>
+
+                    <div class="spec-preview" data-tilt data-tilt-max="5" data-tilt-speed="300">
+                        <div class="text-[10px] font-heading text-arancio tracking-[0.2em] uppercase mb-1">Compression</div>
+                        <div class="text-2xl font-black font-heading text-white">11.8<span class="text-sm">:1</span></div>
+                        <div class="text-xs text-gray-500">High-performance</div>
+                    </div>
+
+                    <div class="spec-preview" data-tilt data-tilt-max="5" data-tilt-speed="300">
+                        <div class="text-[10px] font-heading text-arancio tracking-[0.2em] uppercase mb-1">Valvetrain</div>
+                        <div class="text-2xl font-black font-heading text-white">48</div>
+                        <div class="text-xs text-gray-500">Valves · 4 per cylinder</div>
+                    </div>
+
+                    <div class="spec-preview col-span-2" data-tilt data-tilt-max="5" data-tilt-speed="300">
+                        <div class="text-[10px] font-heading text-arancio tracking-[0.2em] uppercase mb-1">Transmission</div>
+                        <div class="text-2xl font-black font-heading text-white">ISR</div>
+                        <div class="text-xs text-gray-500">Independent Shifting Rods · 50ms shift time</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA / FOOTER -->
+    <section id="cta" class="relative z-30 py-32 px-6 border-t border-white/10 bg-black text-center overflow-hidden">
+        <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-arancio/15 rounded-full blur-[140px] pointer-events-none"></div>
+
+        <div class="max-w-3xl mx-auto relative z-10">
+            <span class="text-arancio font-heading text-[11px] tracking-[0.4em] uppercase mb-4 block">Own The Icon</span>
+            <h2 class="text-4xl md:text-7xl font-black font-heading text-white mb-6">START YOUR JOURNEY</h2>
+            <p class="text-gray-400 text-xs md:text-sm font-light max-w-lg mx-auto mb-10 leading-relaxed">
+                Connect with an official Automobili Lamborghini dealer or request a private digital demonstration session.
+            </p>
+            
+            <button class="btn-cta" onclick="window.location.href='#'">
+                <span class="btn-cta-text">
+                    <svg class="btn-cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        <path d="M2 17l10 5 10-5"/>
+                        <path d="M2 12l10 5 10-5"/>
+                    </svg>
+                    Build Your Spec
+                    <svg class="btn-cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14"/>
+                        <path d="M12 5l7 7-7 7"/>
+                    </svg>
+                </span>
+            </button>
+        </div>
+
+        <footer class="mt-28 pt-8 border-t border-white/5 text-gray-500 text-[11px] flex flex-col md:flex-row justify-between items-center max-w-7xl mx-auto gap-4">
+            <p>&copy; 2026 Automobili Lamborghini S.p.A. All rights reserved.</p>
+            <div class="flex gap-6 tracking-widest uppercase text-[10px]">
+                <a href="#" class="hover:text-arancio transition-colors">Privacy Policy</a>
+                <a href="#" class="hover:text-arancio transition-colors">Legal Terms</a>
+            </div>
+        </footer>
+    </section>
+
+    <!-- SCRIPTS -->
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+        const container = document.getElementById('three-container');
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x050508);
+
+        const camera = new THREE.PerspectiveCamera(35, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.set(6, 2, 8);
+
+        const renderer = new THREE.WebGLRenderer({ 
+            antialias: true,
+            alpha: true
+        });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        container.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.08;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 1.0;
+        controls.minDistance = 6;
+        controls.maxDistance = 6;
+        controls.enableZoom = false;
+        controls.enablePan = false;
+        controls.target.set(0, 0, 0);
+
+        const ambientLight = new THREE.AmbientLight(0x404060, 0.5);
+        scene.add(ambientLight);
+
+        const mainLight = new THREE.DirectionalLight(0xffaa66, 2.5);
+        mainLight.position.set(5, 8, 5);
+        mainLight.castShadow = true;
+        scene.add(mainLight);
+
+        const fillLight = new THREE.DirectionalLight(0x4466ff, 0.6);
+        fillLight.position.set(-3, 1, -4);
+        scene.add(fillLight);
+
+        const rimLight = new THREE.DirectionalLight(0xff5500, 1.2);
+        rimLight.position.set(-2, 3, 5);
+        scene.add(rimLight);
+
+        const backLight = new THREE.DirectionalLight(0xff2200, 0.8);
+        backLight.position.set(0, -1, -6);
+        scene.add(backLight);
+
+        const floorGeo = new THREE.PlaneGeometry(12, 12);
+        const floorMat = new THREE.MeshStandardMaterial({
+            color: 0x08080c,
+            roughness: 0.4,
+            metalness: 0.9,
+            transparent: true,
+            opacity: 0.6
+        });
+        const floor = new THREE.Mesh(floorGeo, floorMat);
+        floor.rotation.x = -Math.PI / 2;
+        floor.position.y = -0.7;
+        floor.receiveShadow = true;
+        scene.add(floor);
+
+        const gridHelper = new THREE.GridHelper(10, 20, 0xff5500, 0xff5500);
+        gridHelper.position.y = -0.68;
+        gridHelper.material.transparent = true;
+        gridHelper.material.opacity = 0.15;
+        scene.add(gridHelper);
+
+        const loader = new GLTFLoader();
+        let model = null;
+
+        loader.load(
+            'lambo.glb',
+            (gltf) => {
+                model = gltf.scene;
+                model.scale.set(1.2, 1.2, 1.2);
+                model.position.y = -0.56;
+                model.position.x = 3;
+                model.position.z = 0;
+                
+                model.traverse((node) => {
+                    if (node.isMesh) {
+                        node.castShadow = true;
+                        node.receiveShadow = true;
+                    }
+                });
+                
+                scene.add(model);
+                controls.autoRotate = true;
+            },
+            undefined,
+            (error) => {
+                console.error('Error loading model:', error);
+            }
+        );
+
+        function resizeRenderer() {
+            const w = container.clientWidth;
+            const h = container.clientHeight;
+            renderer.setSize(w, h);
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+        }
+        window.addEventListener('resize', resizeRenderer);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        document.getElementById('wireframe-btn').addEventListener('click', () => {
+            if (model) {
+                model.traverse((node) => {
+                    if (node.isMesh && node.material) {
+                        if (Array.isArray(node.material)) {
+                            node.material.forEach(mat => mat.wireframe = !mat.wireframe);
+                        } else {
+                            node.material.wireframe = !node.material.wireframe;
+                        }
+                    }
+                });
+            }
+        });
+
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            camera.position.set(6, 2, 8);
+            controls.target.set(0, 0, 0);
+            controls.update();
+        });
+
+        container.addEventListener('mouseenter', () => {
+            controls.autoRotate = false;
+        });
+        container.addEventListener('mouseleave', () => {
+            controls.autoRotate = true;
+        });
+
+        container.addEventListener('touchstart', () => {
+            controls.autoRotate = false;
+        });
+        container.addEventListener('touchend', () => {
+            setTimeout(() => { controls.autoRotate = true; }, 3000);
+        });
+
+        document.querySelectorAll('[data-tilt]').forEach(el => {
+            VanillaTilt.init(el);
+        });
+    </script>
+
+    <!-- Non-module scripts -->
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        const frameCount = 116;
+        const currentFrame = index => `output_all_frames/frame_${index.toString().padStart(5, '0')}.jpg`;
+
+        const images = [];
+        const car = { frame: 0 };
+        const canvas = document.getElementById("hero-canvas");
+        const context = canvas.getContext("2d");
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            render();
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        let imagesLoaded = 0;
+        const loadBar = document.getElementById('load-bar');
+        const loadText = document.getElementById('load-text');
+        const loader = document.getElementById('loader');
+
+        for (let i = 0; i < frameCount; i++) {
+            const img = new Image();
+            img.src = currentFrame(i);
+            img.onload = () => {
+                imagesLoaded++;
+                const progress = Math.round((imagesLoaded / frameCount) * 100);
+                loadBar.style.width = `${progress}%`;
+                loadText.innerText = `INITIALIZING V12 TELEMETRY... ${progress}%`;
+
+                if (imagesLoaded === frameCount) {
+                    gsap.to(loader, {
+                        opacity: 0,
+                        duration: 0.8,
+                        onComplete: () => {
+                            loader.style.display = 'none';
+                            initScrollAnimations();
+                        }
+                    });
+                }
+            };
+            images.push(img);
+        }
+
+        function render() {
+            if (!images[car.frame]) return;
+            const img = images[car.frame];
+            const hRatio = canvas.width / img.width;
+            const vRatio = canvas.height / img.height;
+            const ratio = Math.max(hRatio, vRatio);
+            const centerShift_x = (canvas.width - img.width * ratio) / 2;
+            const centerShift_y = (canvas.height - img.height * ratio) / 2;
+
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(img, 0, 0, img.width, img.height, centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
+        }
+
+        function initScrollAnimations() {
+            resizeCanvas();
+
+            gsap.to(car, {
+                frame: frameCount - 1,
+                snap: "frame",
+                ease: "none",
+                scrollTrigger: {
+                    trigger: "#hero",
+                    start: "top top",
+                    end: "bottom bottom",
+                    scrub: 0.5
+                },
+                onUpdate: render
+            });
+
+            const textTimeline = gsap.timeline({
+                scrollTrigger: {
+                    trigger: "#hero",
+                    start: "top top",
+                    end: "bottom bottom",
+                    scrub: 1
+                }
+            });
+
+            textTimeline
+                .to("#text-1", { opacity: 1, y: 0, duration: 1 })
+                .to("#text-1", { opacity: 0, y: -40, duration: 1 }, "+=0.8")
+                .to("#text-2", { opacity: 1, y: 0, duration: 1 })
+                .to("#text-2", { opacity: 0, y: -40, duration: 1 }, "+=0.8")
+                .to("#text-3", { opacity: 1, y: 0, duration: 1 })
+                .to("#text-3", { opacity: 0, y: -40, duration: 1 }, "+=0.8")
+                .to("#text-4", { opacity: 1, y: 0, duration: 1 })
+                .to("#text-4", { opacity: 0, y: -40, duration: 1 }, "+=0.8");
+
+            ScrollTrigger.refresh();
+        }
+
+        const particleCanvas = document.getElementById('particle-canvas');
+        const pCtx = particleCanvas.getContext('2d');
+        particleCanvas.width = window.innerWidth;
+        particleCanvas.height = window.innerHeight;
+
+        const particles = Array.from({ length: 45 }, () => ({
+            x: Math.random() * particleCanvas.width,
+            y: Math.random() * particleCanvas.height,
+            size: Math.random() * 2 + 0.5,
+            speedY: Math.random() * 0.5 + 0.1,
+            opacity: Math.random() * 0.5 + 0.2
+        }));
+
+        function drawParticles() {
+            pCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+            particles.forEach(p => {
+                pCtx.fillStyle = `rgba(255, 85, 0, ${p.opacity})`;
+                pCtx.beginPath();
+                pCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                pCtx.fill();
+
+                p.y -= p.speedY;
+                if (p.y < 0) p.y = particleCanvas.height;
+            });
+            requestAnimationFrame(drawParticles);
+        }
+        drawParticles();
+
+        // REV SIMULATION
+        const revBtn = document.getElementById('rev-btn');
+        const rpmBar = document.getElementById('rpm-bar');
+        const rpmText = document.getElementById('rpm-text');
+
+        revBtn.addEventListener('click', () => {
+            let rpm = 1000;
+            revBtn.disabled = true;
+            revBtn.innerHTML = '<span class="relative z-10">REVVING V12...</span>';
+
+            const revInterval = setInterval(() => {
+                rpm += Math.floor(Math.random() * 900) + 400;
+                if (rpm >= 8250) {
+                    rpm = 8250;
+                    clearInterval(revInterval);
+                    setTimeout(() => {
+                        rpmBar.style.width = '12%';
+                        rpmText.innerText = '1,000';
+                        revBtn.disabled = false;
+                        revBtn.innerHTML = '<span class="relative z-10">TEST REV ENGINE SOUND</span><span class="absolute inset-0 bg-gradient-to-r from-white to-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>';
+                    }, 1200);
+                }
+                const percentage = (rpm / 8250) * 100;
+                rpmBar.style.width = `${percentage}%`;
+                rpmText.innerText = rpm.toLocaleString();
+            }, 100);
+        });
+
+        // COLOR SELECTOR
+        function selectColor(hex, name, element) {
+            document.querySelectorAll('.color-swatch').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            
+            document.getElementById('color-name').textContent = name;
+            document.getElementById('color-preview').style.backgroundColor = hex;
+            document.getElementById('color-preview').style.boxShadow = `0 0 40px ${hex}44`;
+            document.getElementById('color-name').style.color = hex;
+        }
+
+        document.querySelectorAll('[data-tilt]').forEach(el => {
+            VanillaTilt.init(el);
+        });
+    </script>
+</body>
+</html>
